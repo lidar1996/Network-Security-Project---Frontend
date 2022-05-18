@@ -53,9 +53,9 @@ handleChangePass = () => {
 
 
   render() {
-    if(!this.props.user.isLoggedIn){
-        window.location.assign("/")
-    }
+    // if(!this.props.user.isLoggedIn){
+    //     window.location.assign("/")
+    // }
     let customer = null
     if(this.state.show_customer){
         customer = <Alert severity="info" style={{textAlign: 'center'}}>{this.state.first_name} + " " + {this.state.last_name}</Alert>

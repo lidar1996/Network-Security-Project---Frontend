@@ -74,6 +74,15 @@ handleLogin = () => {
           />
           <Button onClick={this.postOperation}>Send Code</Button>
           <Button onClick={this.handleLogin}>To Login</Button>
+          <div>
+          <TextField
+            id="outlined-name"
+            label="Code From Email"
+            onChange={(event) => {this.setState({email: event.target.value})}}
+            variant="outlined"
+          />
+          <Button onClick={this.handleLogin}>Change Password</Button>
+          </div>
           </div>
       </div>
     );
