@@ -8,14 +8,14 @@ import fs from 'fs';
 import { readFileSync } from 'fs';
 import Alert from '@mui/material/Alert';
 
-class Login extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
       user: {
       email: '',
       pasword: '',
-      error: null}
+      error: ''}
     };
     this.props.saveUser({
       isLoggedIn: false,
@@ -32,9 +32,16 @@ class Login extends Component {
     const https = require("https");
     const httpsAgent = new https.Agent({
       maxVersion: "TLSv1.2",
-      minVersion: "TLSv1.2"
+      minVersion: "TLSv1.2",
+      ca: fs.readFileSync("./resource/bundle.crt"),        
+      cert: fs.readFileSync("./resrouce/thirdparty.crt"),
+      key: fs.readFileSync("./resource/key.pem"),
     });
-    axios.get("users/"+this.state.user.pasword+"/"+this.state.user.email, httpsAgent)
+    const user = {
+        email: this.state.email,
+        pasword: this.state.password,
+    }
+    axios.post("users", user, httpsAgent)
     .then((response) => {
         console.log(response.data) 
         this.props.saveUser({
@@ -48,16 +55,12 @@ class Login extends Component {
         window.location.assign("/system")
     })
     .catch((error) => {
-        this.setState({error: 'failed to connect'})
+        this.setState({error: 'failed to create'})
         console.log(error.response.data)
     });
 }
-  handleRegister = () => {
-    window.location.assign("/register")
-  }
-
-  handleForgot = () => {
-    window.location.assign("/forgotpassword")
+handleToLogin = () => {
+    window.location.assign("/")
   }
 
 
@@ -66,7 +69,7 @@ class Login extends Component {
     return (
       <div style={{ position: 'fixed',  width: '100%', height: '100%', right: 0, left: 0, top: 0, bottom: 0, background: 'aliceblue'}}>
         <div style={{alignContent:'center', display: 'block', margin: 'auto 0'}}>
-          <h1>Welcome to Comunication_LTD</h1>
+          <h1>REGISTER</h1>
           {this.state.error ?  <Alert severity="error" style={{textAlign: 'center'}}>{this.state.error}</Alert> : ''}
         <TextField
             id="outlined-name"
@@ -80,9 +83,8 @@ class Login extends Component {
             onChange={(event) => {this.setState({user:{password: event.target.value}})}}
             variant="outlined"
           />
-          <Button onClick={this.postOperation}>Login</Button>
-          <Button onClick={this.handleRegister}>To Register</Button>
-          <Button onClick={this.handleForgot}>Forgot Password</Button>
+          <Button onClick={this.postOperation}>Register</Button>
+          <Button onClick={this.handleToLogin}>To Login</Button>
           </div>
       </div>
     );
@@ -99,5 +101,5 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const SignIn = connect(mapStateToProps, mapDispatchToProps)(Login);
-export default connect()(SignIn);
+const reg = connect(mapStateToProps, mapDispatchToProps)(Register);
+export default connect()(reg);

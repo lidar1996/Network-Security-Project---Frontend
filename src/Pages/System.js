@@ -8,14 +8,14 @@ import fs from 'fs';
 import { readFileSync } from 'fs';
 import Alert from '@mui/material/Alert';
 
-class Login extends Component {
+class UpdatePassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {
-      email: '',
-      pasword: '',
-      error: null}
+        first_name: '',
+        last_name: '',
+        error: null,
+        show_customer: false
     };
     this.props.saveUser({
       isLoggedIn: false,
@@ -32,57 +32,54 @@ class Login extends Component {
     const https = require("https");
     const httpsAgent = new https.Agent({
       maxVersion: "TLSv1.2",
-      minVersion: "TLSv1.2"
+      minVersion: "TLSv1.2",
+      ca: fs.readFileSync("./resource/bundle.crt"),        
+      cert: fs.readFileSync("./resrouce/thirdparty.crt"),
+      key: fs.readFileSync("./resource/key.pem"),
     });
     axios.get("users/"+this.state.user.pasword+"/"+this.state.user.email, httpsAgent)
     .then((response) => {
-        console.log(response.data) 
-        this.props.saveUser({
-          isLoggedIn: true,
-          
-          user: {
-            email: response.data.email,
-            password: response.data.password                
-          },
-        });
-        window.location.assign("/system")
+        console.log(response.data)
+         this.setState({show_customer: true})
     })
     .catch((error) => {
         this.setState({error: 'failed to connect'})
         console.log(error.response.data)
     });
 }
-  handleRegister = () => {
-    window.location.assign("/register")
-  }
-
-  handleForgot = () => {
-    window.location.assign("/forgotpassword")
+handleChangePass = () => {
+    window.location.assign("/changepassword")
   }
 
 
   render() {
-    console.log(this.state)
+    if(!this.props.user.isLoggedIn){
+        window.location.assign("/")
+    }
+    let customer = null
+    if(this.state.show_customer){
+        customer = <Alert severity="info" style={{textAlign: 'center'}}>{this.state.first_name} + " " + {this.state.last_name}</Alert>
+    }
     return (
       <div style={{ position: 'fixed',  width: '100%', height: '100%', right: 0, left: 0, top: 0, bottom: 0, background: 'aliceblue'}}>
         <div style={{alignContent:'center', display: 'block', margin: 'auto 0'}}>
-          <h1>Welcome to Comunication_LTD</h1>
+          <h1>Add New Client</h1>
           {this.state.error ?  <Alert severity="error" style={{textAlign: 'center'}}>{this.state.error}</Alert> : ''}
         <TextField
             id="outlined-name"
-            label="Email"
-            onChange={(event) => {this.setState({user:{email: event.target.value}})}}
+            label="First Name"
+            onChange={(event) => {this.setState({first_name: event.target.value})}}
             variant="outlined"
           />
             <TextField
             id="outlined-name"
-            label="Password"
-            onChange={(event) => {this.setState({user:{password: event.target.value}})}}
+            label="Last Name"
+            onChange={(event) => {this.setState({last_name: event.target.value})}}
             variant="outlined"
           />
-          <Button onClick={this.postOperation}>Login</Button>
-          <Button onClick={this.handleRegister}>To Register</Button>
-          <Button onClick={this.handleForgot}>Forgot Password</Button>
+          {customer}
+          <Button onClick={this.postOperation}>ADD</Button>
+          <Button onClick={this.handleChangePass}>To Change Password</Button>
           </div>
       </div>
     );
@@ -99,5 +96,5 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-const SignIn = connect(mapStateToProps, mapDispatchToProps)(Login);
+const SignIn = connect(mapStateToProps, mapDispatchToProps)(UpdatePassword);
 export default connect()(SignIn);
