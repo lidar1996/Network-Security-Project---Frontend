@@ -31,38 +31,60 @@ class UpdatePassword extends Component {
     const https = require("https");
     const httpsAgent = new https.Agent({
       maxVersion: "TLSv1.2",
-      minVersion: "TLSv1.2",
-      ca: fs.readFileSync("./resource/bundle.crt"),        
-      cert: fs.readFileSync("./resrouce/thirdparty.crt"),
-      key: fs.readFileSync("./resource/key.pem"),
+      minVersion: "TLSv1.2"
     });
-    axios.get("users/"+this.state.user.pasword+"/"+this.state.user.email, httpsAgent)
+    axios.get("users/"+this.props.user.user.email+"/"+this.state.currentPass, httpsAgent)
     .then((response) => {
         console.log(response.data) 
-        this.props.saveUser({
-          isLoggedIn: true,
-          
-          user: {
-            email: response.data.email,
-            password: response.data.password                
-          },
-        });
-        window.location.assign("/system")
+        this.handle_change_pass()
     })
     .catch((error) => {
         this.setState({error: 'failed to connect'})
         console.log(error.response.data)
     });
 }
+
+handle_change_pass = () => {
+    const https = require("https");
+    const httpsAgent = new https.Agent({
+      maxVersion: "TLSv1.2",
+      minVersion: "TLSv1.2"
+    });
+    const tmp = {
+        password: this.state.newPass
+    }
+    axios.put("users/"+this.props.user.user.email, tmp, httpsAgent)
+    .then((response) => {
+        console.log(response.data) 
+        
+        this.props.saveUser({
+          isLoggedIn: true,
+          
+          user: {
+            email: this.props.user.user.email,
+            password: this.state.newPass                
+          },
+        });
+    })
+    .catch((error) => {
+        this.setState({error: 'password is not acceptable'})
+        console.log(error.response.data)
+    });
+}
+
 handleLogin = () => {
     window.location.assign("/")
   }
 
+  toSystem = () => {
+    window.location.assign("/system")
+  }
+
 
   render() {
-    // if(!this.props.user.isLoggedIn){
-    //     window.location.assign("/")
-    //   }
+    if(!this.props.user.isLoggedIn){
+        window.location.assign("/")
+      }
     return (
       <div style={{ position: 'fixed',  width: '100%', height: '100%', right: 0, left: 0, top: 0, bottom: 0, background: 'aliceblue'}}>
         <div style={{alignContent:'center', display: 'block', margin: 'auto 0'}}>
@@ -82,6 +104,7 @@ handleLogin = () => {
           />
           <Button onClick={this.postOperation}>UPDATE</Button>
           <Button onClick={this.handleLogin}>To Login</Button>
+          <Button onClick={this.toSystem}>To System</Button>
           </div>
       </div>
     );

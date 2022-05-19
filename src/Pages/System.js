@@ -32,12 +32,13 @@ class UpdatePassword extends Component {
     const https = require("https");
     const httpsAgent = new https.Agent({
       maxVersion: "TLSv1.2",
-      minVersion: "TLSv1.2",
-      ca: fs.readFileSync("./resource/bundle.crt"),        
-      cert: fs.readFileSync("./resrouce/thirdparty.crt"),
-      key: fs.readFileSync("./resource/key.pem"),
+      minVersion: "TLSv1.2"
     });
-    axios.get("users/"+this.state.user.pasword+"/"+this.state.user.email, httpsAgent)
+    const client = {
+        f_name: this.state.first_name,
+        l_name: this.state.last_name
+    }
+    axios.post("clients", client, httpsAgent)
     .then((response) => {
         console.log(response.data)
          this.setState({show_customer: true})
@@ -53,9 +54,9 @@ handleChangePass = () => {
 
 
   render() {
-    // if(!this.props.user.isLoggedIn){
-    //     window.location.assign("/")
-    // }
+    if(!this.props.user.isLoggedIn){
+        window.location.assign("/")
+    }
     let customer = null
     if(this.state.show_customer){
         customer = <Alert severity="info" style={{textAlign: 'center'}}>{this.state.first_name} + " " + {this.state.last_name}</Alert>

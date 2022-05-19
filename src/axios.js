@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const instance = axios.create({
-    baseURL: "http://localhost:5500/ctdl/"
+    baseURL: "http://localhost:5500/network/"
 })
 
 export default instance;

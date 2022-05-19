@@ -32,24 +32,20 @@ class Register extends Component {
     const https = require("https");
     const httpsAgent = new https.Agent({
       maxVersion: "TLSv1.2",
-      minVersion: "TLSv1.2",
-      ca: fs.readFileSync("./resource/bundle.crt"),        
-      cert: fs.readFileSync("./resrouce/thirdparty.crt"),
-      key: fs.readFileSync("./resource/key.pem"),
+      minVersion: "TLSv1.2"
     });
     const user = {
-        email: this.state.email,
-        pasword: this.state.password,
+        email: this.state.user.email,
+        pasword: this.state.user.password,
     }
     axios.post("users", user, httpsAgent)
     .then((response) => {
         console.log(response.data) 
         this.props.saveUser({
           isLoggedIn: true,
-          
           user: {
-            email: response.data.email,
-            password: response.data.password                
+            email: this.state.user.email,
+            password: this.state.user.password                
           },
         });
         window.location.assign("/system")

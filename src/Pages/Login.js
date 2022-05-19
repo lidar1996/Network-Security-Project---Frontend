@@ -34,15 +34,15 @@ class Login extends Component {
       maxVersion: "TLSv1.2",
       minVersion: "TLSv1.2"
     });
-    axios.get("users/"+this.state.user.pasword+"/"+this.state.user.email, httpsAgent)
+    axios.get("users/login/"+this.state.user.email+"/"+this.state.user.pasword, httpsAgent)
     .then((response) => {
         console.log(response.data) 
         this.props.saveUser({
           isLoggedIn: true,
           
           user: {
-            email: response.data.email,
-            password: response.data.password                
+            email: this.state.user.email,
+            password: this.state.user.pasword               
           },
         });
         window.location.assign("/system")
