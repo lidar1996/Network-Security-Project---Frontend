@@ -12,10 +12,9 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {
       email: '',
-      pasword: '',
-      error: null}
+      password: '',
+      error: null
     };
     this.props.saveUser({
       isLoggedIn: false,
@@ -34,15 +33,15 @@ class Login extends Component {
       maxVersion: "TLSv1.2",
       minVersion: "TLSv1.2"
     });
-    axios.get("users/login/"+this.state.user.email+"/"+this.state.user.pasword, httpsAgent)
+    axios.get("users/login/"+this.state.email+"/"+this.state.password, httpsAgent)
     .then((response) => {
         console.log(response.data) 
         this.props.saveUser({
           isLoggedIn: true,
           
           user: {
-            email: this.state.user.email,
-            password: this.state.user.pasword               
+            email: this.state.email,
+            password: this.state.password               
           },
         });
         window.location.assign("/system")
@@ -71,13 +70,13 @@ class Login extends Component {
         <TextField
             id="outlined-name"
             label="Email"
-            onChange={(event) => {this.setState({user:{email: event.target.value}})}}
+            onChange={(event) => {this.setState({email: event.target.value})}}
             variant="outlined"
           />
             <TextField
             id="outlined-name"
             label="Password"
-            onChange={(event) => {this.setState({user:{password: event.target.value}})}}
+            onChange={(event) => {this.setState({password: event.target.value})}}
             variant="outlined"
           />
           <Button onClick={this.postOperation}>Login</Button>

@@ -15,17 +15,15 @@ class UpdatePassword extends Component {
         first_name: '',
         last_name: '',
         error: null,
-        show_customer: false
+        show_customer: false,
     };
     this.props.saveUser({
-      isLoggedIn: false,
-
-      user: {
-        email: this.props.user.user.email,
-        password: this.props.user.user.password,
-
-      },
-    });
+        isLoggedIn: true,
+        user: {
+          email: this.props.user.user.email,
+          password: this.props.user.user.password                
+        },
+      });
     console.log(this.props.user.user);
   }
   postOperation = () => {
@@ -52,14 +50,19 @@ handleChangePass = () => {
     window.location.assign("/changepassword")
   }
 
+  handleLogout = () => {
+    window.location.assign("/")
+  }
+
 
   render() {
     if(!this.props.user.isLoggedIn){
         window.location.assign("/")
     }
+    console.log(this.props.user.isLoggedIn)
     let customer = null
     if(this.state.show_customer){
-        customer = <Alert severity="info" style={{textAlign: 'center'}}>{this.state.first_name} + " " + {this.state.last_name}</Alert>
+        customer = <Alert severity="info" style={{textAlign: 'center'}}>{this.state.first_name}  {this.state.last_name}</Alert>
     }
     return (
       <div style={{ position: 'fixed',  width: '100%', height: '100%', right: 0, left: 0, top: 0, bottom: 0, background: 'aliceblue'}}>
@@ -67,12 +70,14 @@ handleChangePass = () => {
           <h1>Add New Client</h1>
           {this.state.error ?  <Alert severity="error" style={{textAlign: 'center'}}>{this.state.error}</Alert> : ''}
         <TextField
+        required
             id="outlined-name"
             label="First Name"
             onChange={(event) => {this.setState({first_name: event.target.value})}}
             variant="outlined"
           />
             <TextField
+            required
             id="outlined-name"
             label="Last Name"
             onChange={(event) => {this.setState({last_name: event.target.value})}}
@@ -80,7 +85,8 @@ handleChangePass = () => {
           />
           {customer}
           <Button onClick={this.postOperation}>ADD</Button>
-          <Button onClick={this.handleChangePass}>To Change Password</Button>
+          <Button onClick={this.handleChangePass}>To Update Password</Button>
+          <Button onClick={this.handleLogout}>Logout</Button>
           </div>
       </div>
     );

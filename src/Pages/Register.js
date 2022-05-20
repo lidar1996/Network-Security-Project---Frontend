@@ -12,10 +12,9 @@ class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {
-      email: '',
-      pasword: '',
-      error: ''}
+        email: '',
+        password: '',
+        error: ''
     };
     this.props.saveUser({
       isLoggedIn: false,
@@ -34,18 +33,19 @@ class Register extends Component {
       maxVersion: "TLSv1.2",
       minVersion: "TLSv1.2"
     });
-    const user = {
-        email: this.state.user.email,
-        pasword: this.state.user.password,
+    const tmp = {
+        email: this.state.email,
+        password: this.state.password  
     }
-    axios.post("users", user, httpsAgent)
+    console.log(tmp)
+    axios.post("users", tmp, httpsAgent)
     .then((response) => {
         console.log(response.data) 
         this.props.saveUser({
           isLoggedIn: true,
           user: {
-            email: this.state.user.email,
-            password: this.state.user.password                
+            email: this.state.email,
+            password: this.state.password                
           },
         });
         window.location.assign("/system")
@@ -70,13 +70,13 @@ handleToLogin = () => {
         <TextField
             id="outlined-name"
             label="Email"
-            onChange={(event) => {this.setState({user:{email: event.target.value}})}}
+            onChange={(event) => {this.setState({email: event.target.value})}}
             variant="outlined"
           />
             <TextField
             id="outlined-name"
             label="Password"
-            onChange={(event) => {this.setState({user:{password: event.target.value}})}}
+            onChange={(event) => {this.setState({password: event.target.value})}}
             variant="outlined"
           />
           <Button onClick={this.postOperation}>Register</Button>

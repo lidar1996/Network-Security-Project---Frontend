@@ -36,9 +36,9 @@ class ForgotPassword extends Component {
       maxVersion: "TLSv1.2",
       minVersion: "TLSv1.2"
     });
-    axios.get("users/send_code/"+this.state.user.email, httpsAgent)
+    axios.get("users/send_code/"+this.state.email, httpsAgent)
     .then((response) => {
-        this.setState({show: true})
+        this.setState({show: true, error: null})
         console.log(response.data)
     })
     .catch((error) => {
@@ -57,9 +57,10 @@ hanldeCodeFromMail = () => {
         code: this.state.value_from_mail
 
     }
-    axios.post("users/verify_code/"+this.state.user.email, code, httpsAgent)
+    axios.post("users/verify_code/"+this.state.email, code, httpsAgent)
     .then((response) => {
         console.log(response.data)
+        this.setState({show_password: true, error: null})
     })
     .catch((error) => {
         this.setState({error: 'code is wrong'})
@@ -77,10 +78,16 @@ hanldeChangePassword = () => {
         password: this.state.password
 
     }
-    axios.put("users/"+this.state.user.email, tmp, httpsAgent)
+    axios.put("users/"+this.state.email, tmp, httpsAgent)
     .then((response) => {
         console.log(response.data)
-        this.props.saveUser({isLoggedIn: true});
+        this.props.saveUser({
+            isLoggedIn: true,
+            user: {
+              email: this.state.email,
+              password: this.state.password                
+            },
+          });
         window.location.assign("/system")        
     })
     .catch((error) => {
@@ -100,12 +107,13 @@ handleLogin = () => {
         code_handler = 
         <div>
           <TextField
+          required
             id="outlined-name"
             label="Code From Email"
             onChange={(event) => {this.setState({value_from_mail: event.target.value})}}
             variant="outlined"
           />
-          <Button onClick={this.hanldeCodeFromMail}>Change Password</Button>
+          <Button onClick={this.hanldeCodeFromMail}>Check Code</Button>
           </div>
     }
     let pass_handler = null;
@@ -113,6 +121,7 @@ handleLogin = () => {
         pass_handler = 
         <div>
           <TextField
+          required
             id="outlined-name"
             label="New Password"
             onChange={(event) => {this.setState({password: event.target.value})}}
@@ -127,6 +136,7 @@ handleLogin = () => {
           <h1>Forgot Your Password?</h1>
           {this.state.error ?  <Alert severity="error" style={{textAlign: 'center'}}>{this.state.error}</Alert> : ''}
         <TextField
+        required
             id="outlined-name"
             label="Email"
             onChange={(event) => {this.setState({email: event.target.value})}}
